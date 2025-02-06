@@ -5,13 +5,13 @@
 - Authenticate a user with a username and password.
 - Authorize logged in users for specific actions.
 
----
+***
 
 ## Key Vocab
 
-- **Identity and Access Management (IAM)**: a subfield of software engineering
-  that focuses on users, their attributes, their login information, and the
-  resources that they are allowed to access.
+- **Identity and Access Management (IAM)**: a subfield of software engineering that
+  focuses on users, their attributes, their login information, and the resources
+  that they are allowed to access.
 - **Authentication**: proving one's identity to an application in order to
   access protected information; logging in.
 - **Authorization**: allowing or disallowing access to resources based on a
@@ -21,7 +21,7 @@
 - **Cookie**: data from a web application that is stored by the browser. The
   application can retrieve this data during subsequent sessions.
 
----
+***
 
 ## Introduction
 
@@ -32,7 +32,7 @@ full authentication and authorization flow using sessions and cookies in Flask,
 so getting this lab under your belt will give you some good code to reference
 when you're building your next project with _auth_. Let's get started!
 
----
+***
 
 ## Setup
 
@@ -43,6 +43,8 @@ Flask API backend and a React frontend. To get set up, run:
 $ pipenv install && pipenv shell
 $ npm install --prefix client
 $ cd server
+$ flask db upgrade
+$ seed.py
 ```
 
 You can work on this lab by running the tests with `pytest`. It will also be
@@ -52,9 +54,6 @@ app in the browser. You can run the Flask server with:
 ```console
 $ python app.py
 ```
-
-Note that running `python app.py` will generate an error if you haven't created
-your models and run your migrations yet.
 
 And you can run React in another terminal from the project root directory with:
 
@@ -66,7 +65,6 @@ $ npm start --prefix client
 
 Create a `User` model with the following attributes:
 
-- `id` that is an integer type and a primary key.
 - `username` that is a `String` type.
 - `_password_hash` that is a `String` type.
 - `image_url` that is a `String` type.
@@ -76,42 +74,29 @@ Your `User` model should also:
 
 - incorporate `bcrypt` to create a secure password. Attempts to access the
   `password_hash` should be met with an `AttributeError`.
-- constrain the user's username to be **present** and **unique** (no two users
-  can have the same username).
+- validate the user's username to ensure that it is **present** and **unique**
+  (no two users can have the same username).
 - **have many** recipes.
 
 Next, create a `Recipe` model with the following attributes:
 
 - a recipe **belongs to** a user.
-- `id` that is an integer type and a primary key.
 - `title` that is a `String` type.
 - `instructions` that is a `String` type.
 - `minutes_to_complete` that is an `Integer` type.
 
-Add database constraints for the `Recipe` model:
+Add validations for the `Recipe` model:
 
-Your `Recipe` model should also:
+- `title` must be present.
+- `instructions` must be present and at least 50 characters long.
 
-- constrain the `title` to be present.
-- constrain the `instructions` to be present and at least 50 characters long, 
-alternately you may use a custom validation.
-
-Run the migrations after creating your models. You'll need to run
-`flask db init` before running `flask db revision autogenerate` or
-`flask db upgrade`.
+Run the migrations after creating your models.
 
 Ensure that the tests for the models are passing before moving forward. To run
 the tests for _only_ the model files, run:
 
 ```console
 $ pytest testing/models_testing/
-```
-
-Once your tests are passing, you can seed your database from within the `server`
-directory by running:
-
-```console
-$ python seed.py
 ```
 
 ### Sign Up Feature
@@ -131,11 +116,10 @@ Handle sign up by implementing a `POST /signup` route. It should:
   - Return a JSON response with the error message, and an HTTP status code of
     422 (Unprocessable Entity).
 
-> **Note: Recall that we need to format our error messages in a way that makes
-> it easy to display the information in our frontend. For this lab, because we
-> are setting up multiple validations on our `User` and `Recipe` models, our
-> error responses need to be formatted in a way that accommodates multiple
-> errors.**
+> **Note: Recall that we need to format our error messages in a way that makes it
+> easy to display the information in our frontend. For this lab, because we are
+> setting up multiple validations on our `User` and `Recipe` models, our error
+> responses need to be formatted in a way that accommodates multiple errors.**
 
 ### Auto-Login Feature
 
@@ -181,9 +165,9 @@ Handle login by implementing a `POST /login` route. It should:
     (Unauthorized).
 
 Make sure this route works as intended by running
-`pytest testing/app_testing/app_test.py::TestLogin` before moving forward. You
-should also be able to test this in the React application by logging in via the
-login form.
+`pytest testing/app_testing/app_test.py::TestLogin` before moving
+forward. You should also be able to test this in the React application by
+logging in via the login form.
 
 ### Logout Feature
 
@@ -249,13 +233,13 @@ Handle recipe creation by implementing a `POST /recipes` route. It should:
   - Return a JSON response with the error messages, and an HTTP status code of
     422 (Unprocessable Entity).
 
-After finishing the `RecipeIndex` resource, you're done! Make sure to check your
-work. You should be able to run the full test suite now with `pytest`.
+After finishing the `RecipeIndex` resource, you're done! Make sure to check
+your work. You should be able to run the full test suite now with `pytest`.
 
 You should also be able to test this in the React application by creating a new
 recipe with the recipe form, and viewing a list of recipes.
 
----
+***
 
 ## Resources
 

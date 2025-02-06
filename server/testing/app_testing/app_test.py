@@ -210,7 +210,7 @@ class TestLogout:
             # check if logged out
             client.delete('/logout')
             with client.session_transaction() as session:
-                assert not session.get('user_id')
+                assert not session['user_id']
             
     def test_401s_if_no_session(self):
         '''returns 401 if a user attempts to logout without a session at /logout.'''
@@ -243,7 +243,7 @@ class TestRecipeIndex:
                 image_url=fake.url(),
             )
 
-            user.password_hash = 'secret'
+            user.password_hash = user.username + 'password'
 
             db.session.add(user)
 
@@ -268,12 +268,10 @@ class TestRecipeIndex:
         # start actual test here
         with app.test_client() as client:
 
-            client.post('/login', json={
-                'username': 'Slagathor',
-                'password': 'secret',
-            })
+            with client.session_transaction() as session:
+                
+                session['user_id'] = User.query.filter(User.username == "Slagathor").first().id
 
-        
             response = client.get('/recipes')
             response_json = response.get_json()
 
@@ -318,19 +316,19 @@ class TestRecipeIndex:
                 bio=fake.paragraph(nb_sentences=3),
                 image_url=fake.url(),
             )
-            user.password_hash = 'secret'
-            
+
             db.session.add(user)
             db.session.commit()
 
         # start actual test here
         with app.test_client() as client:
 
-            client.post('/login', json={
-                'username': 'Slagathor',
-                'password': 'secret',
-            })
-            
+            with client.session_transaction() as session:
+                
+                session['user_id'] = User.query.filter(User.username == "Slagathor").first().id
+
+            fake = Faker()
+
             response = client.post('/recipes', json={
                 'title': fake.sentence(),
                 'instructions': fake.paragraph(nb_sentences=8),
@@ -363,8 +361,6 @@ class TestRecipeIndex:
                 bio=fake.paragraph(nb_sentences=3),
                 image_url=fake.url(),
             )
-            user.password_hash = 'secret'
-            
 
             db.session.add(user)
             db.session.commit()
@@ -372,11 +368,10 @@ class TestRecipeIndex:
         # start actual test here
         with app.test_client() as client:
 
-            client.post('/login', json={
-                'username': 'Slagathor',
-                'password': 'secret',
-            })
-            
+            with client.session_transaction() as session:
+                
+                session['user_id'] = User.query.filter(User.username == "Slagathor").first().id
+
             fake = Faker()
 
             response = client.post('/recipes', json={
